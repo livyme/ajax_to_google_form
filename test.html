@@ -1,71 +1,107 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Test Google Forms</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-           <link href="http://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"/>
+  <head>
+    <title>Test Google Forms</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="http://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="http://cdn.jsdelivr.net/fontawesome/4.1.0/css/font-awesome.min.css" />
-    
     <link rel="stylesheet" href="http://cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/css/bootstrapValidator.min.css"/>
     <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    
     <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
-    </head>
-    <body>
-        <div>
-            <div>
-                <strong>Test Google Form</strong>
-            </div>
-            <form id="form" target="_self" onsubmit="" action="">
-                <fieldset>
-                    <label>Text</label>
-                    <textarea id="feed" name="feed"></textarea>
-                </fieldset>
-                <div style="width: 100%; display: block; float: right;">
-                    <button id="send" type="submit">
-                        Send
-                    </button>
-                </div>
-            </form>
-        </div>
-        <script type="text/javascript">
-            function parseInput() {
-                var field = $('#feed').val();
-                var filter0 = field.split("-|");
-                console.log(filter0.length);
-                
-                for(j=0;j<filter0.length;j++){
-                    postToGoogle(filter0[j]);
-                }
+  </head>
+  <body>
+    <div style="width:400px;margin:0 auto;">
+      <div>
+        <strong>Test Google Form</strong>
+      </div>
+      <div class="hidden-print" style="margin:20px auto;">
+        <form id="form" target="_self" onsubmit="" action="POST">
+          <fieldset>
+            <!-- <label>Text</label> -->
+            <textarea id="feed" name="feed" rows="10" cols="60"></textarea>
+          </fieldset>
+          <div style="width: 100%; display: block; float: right;">
+            <button id="send" type="submit">Send</button>
+          </div>
+        </form>
+      </div>
+      <div id="result" style="display:none;">The following result has been uploaded to Google Sheet:
+        <hr/>
+        <div id='result_output'></div>
+      </div>
+      <div id="error" style="display:none;"><hr/>The following error occurred:
+        <hr>
+        <div id="error_output"></div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      function parseInput() {
+        var field = $('#feed').val().trim();
+        var filter0 = field.split("-|").filter(function(el) {return el.length != 0}); //Remove empty array
+        for(j=0;j<filter0.length;j++){
+          write_row = filter0[j].split("|").filter(function(el) {return el.length != 0});
+          if (write_row.length != 6) {
+            console.log(write_row);
+            //ignore array with just empty spaces:
+            if (write_row.length > 1) {
+              document.getElementById("error").style = "display:block;color:red;";
+              document.getElementById("error_output").innerHTML += "<p>" + write_row + "<br/>The above line has "+write_row.length +" elements instead of 6.</p>";
+            } else {
+              if (write_row[0].trim() != ""){
+                document.getElementById("error").style = "display:block;color:red;";
+                document.getElementById("error_output").innerHTML += "<p>" + write_row[0] + "<br/>The above line does not have '|'delimiter.</p>";
+              }
             }
-            
-            function postToGoogle(value) { 
-                $.ajax({
-                url: "https://docs.google.com/forms/d/e/1FAIpQLScfkaRigancL7oS3BlgxaA1Gl-G9JkTP1Ynv8RHrxzCDIQ51w/formResponse",
-                data: {"entry.720312864": value},
-                // beforeSend: setHeader,
-                // crossDomain: true,
-                type: "POST",
-                dataType: "xml",
-                statusCode: {
-                    0: function() {
-                        console.log("OK");
-                    },
-                    200: function() {
-                        console.log("OK");
-                    }
-                }
-            });
+
+          } else {
+            //clean up data:
+            for (i=0; i< write_row.length; i++) {
+              //Remove whitespaces
+              write_row[i] = write_row[i].trim();
+              //If data has ":", only keep the second portion
+              // i.e. keep "1234" if "PO: 1234"
+              if (write_row[i].indexOf(":")>1) {
+                write_row[i] = write_row[i].split(":")[1].trim();
+              }
             }
-             
-            $(document).ready(function(){
-                $('#form').submit(function() {
-                    // postToGoogle();
-                    parseInput();
-                    return false;
-                });
-            });
-        </script>
-    </body>
+            postToGoogle(write_row);
+          }
+        }
+      }
+
+      function postToGoogle(value) {
+        var google_url = "https://docs.google.com/forms/d/e/1FAIpQLScfkaRigancL7oS3BlgxaA1Gl-G9JkTP1Ynv8RHrxzCDIQ51w/formResponse";
+
+        $.ajax({
+          url: google_url,
+          data: {
+            "entry.720312864": value[0],
+            "entry.1326218862": value[1],
+            "entry.536029499": value[2],
+            "entry.820736794": value[3],
+            "entry.100157182": value[4],
+            "entry.1170473252": value[5],
+          },
+          type: "POST",
+          dataType: "xml",
+          statusCode: {
+            0: function() {
+              document.getElementById("result").style = "display:block;";
+              document.getElementById("result_output").innerHTML += "<p>"+ value+"</p>";
+            },
+            200: function() {
+            }
+          }
+        });
+      }
+
+      $(document).ready(function(){
+        $('#form').submit(function() {
+          parseInput();
+          return false;
+        });
+      });
+    </script>
+  </body>
 </html>
