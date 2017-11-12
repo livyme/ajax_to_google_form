@@ -9,9 +9,33 @@
     <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
+    <style>
+      #confirm_table {
+          font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      #confirm_table td, #confirm_table th {
+          border: 1px solid #ddd;
+          padding: 8px;
+      }
+
+      #confirm_table tr:nth-child(even){background-color: #f2f2f2;}
+
+      #confirm_table tr:hover {background-color: #ddd;}
+
+      #confirm_table th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          background-color: #4CAF50;
+          color: white;
+}
+</style>
   </head>
   <body>
-    <div style="width:400px;margin:0 auto;">
+    <div style="width:600px;margin:0 auto;">
       <div>
         <strong>Test Google Form</strong>
       </div>
@@ -22,27 +46,32 @@
             <textarea id="feed" name="feed" rows="10" cols="60"></textarea>
           </fieldset>
           <div style="width: 100%; display: block; float: right;">
-            <button id="send" type="submit">Send</button>
+            <button id="send" type="submit">Parse</button>
           </div>
         </form>
       </div>
+      <div class="hidden-print" id="confirm" style="display:block;"></div>
+      <div class="hidden-print" id="prompt" style="display:none;">Please verify the result is correct. <br/>Only submit if everything is ok.
+        <button id="btnSubmit">Submit</button>
+      </div>
+
       <div id="result" style="display:none;">The following result has been uploaded to Google Sheet:
         <hr/>
         <div id='result_output'></div>
       </div>
       <div id="error" style="display:none;"><hr/>The following error occurred:
-        <hr>
+        <hr/>
         <div id="error_output"></div>
       </div>
     </div>
     <script type="text/javascript">
       function parseInput() {
+        var result = [];
         var field = $('#feed').val().trim();
         var filter0 = field.split("-|").filter(function(el) {return el.length != 0}); //Remove empty array
-        for(j=0;j<filter0.length;j++){
-          write_row = filter0[j].split("|").filter(function(el) {return el.length != 0});
+        for(var i in filter0){
+          write_row = filter0[i].split("|").filter(function(el) {return el.length != 0});
           if (write_row.length != 6) {
-            console.log(write_row);
             //ignore array with just empty spaces:
             if (write_row.length > 1) {
               document.getElementById("error").style = "display:block;color:red;";
@@ -56,7 +85,7 @@
 
           } else {
             //clean up data:
-            for (i=0; i< write_row.length; i++) {
+            for (var i in write_row) {
               //Remove whitespaces
               write_row[i] = write_row[i].trim();
               //If data has ":", only keep the second portion
@@ -65,12 +94,45 @@
                 write_row[i] = write_row[i].split(":")[1].trim();
               }
             }
-            postToGoogle(write_row);
+            result.push(write_row);
           }
+        }
+        return result;
+      }
+
+      function display_confirmation(){
+        var value = parseInput();
+        table_html = "<table id='confirm_table'>\
+          <tr>\
+            <th>PO</th>\
+            <th>Part Number</th>\
+            <th>Qty</th>\
+            <th>BIN number</th>\
+            <th>Receiver Name</th>\
+            <th>Receive Date</th>\
+          </tr>"
+        for (var i in value){
+          table_html += "<tr>";
+          for (var j in value[i]) {
+            table_html += "<td>"+value[i][j]+"</td>";
+          }
+          table_html += "</tr>";
+
+        }
+        table_html+= "</table><hr/>";
+        document.getElementById("confirm").innerHTML = table_html
+        document.getElementById("prompt").style="display:block";
+      }
+
+
+      function post_all_to_google(){
+        var value = parseInput();
+        for (var i in value){
+          post_one_record_to_google(value[i]);
         }
       }
 
-      function postToGoogle(value) {
+      function post_one_record_to_google(value) {
         var google_url = "https://docs.google.com/forms/d/e/1FAIpQLScfkaRigancL7oS3BlgxaA1Gl-G9JkTP1Ynv8RHrxzCDIQ51w/formResponse";
 
         $.ajax({
@@ -98,7 +160,11 @@
 
       $(document).ready(function(){
         $('#form').submit(function() {
-          parseInput();
+          display_confirmation();
+          return false;
+        });
+        $("#btnSubmit").click(function(){
+          post_all_to_google();
           return false;
         });
       });
