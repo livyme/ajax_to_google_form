@@ -84,7 +84,7 @@
                     return el.length != 0
                 });
                 if (write_row.length != 6) {
-                    //ignore array with just empty spaces:
+                    //check for input errors:
                     if (write_row.length > 1) {
                         document.getElementById("error").style = "display:block;color:red;";
                         document.getElementById("error_output").innerHTML += "<p>" + write_row + "<br/>The above line has " + write_row.length + " elements instead of 6.</p>";
@@ -94,7 +94,6 @@
                             document.getElementById("error_output").innerHTML += "<p>" + write_row[0] + "<br/>The above line does not have '|'delimiter.</p>";
                         }
                     }
-
                 } else {
                     //clean up data:
                     for (var i in write_row) {
@@ -115,14 +114,14 @@
         function display_confirmation() {
             var value = parseInput();
             table_html = "<table id='confirm_table'>\
-          <tr>\
-            <th>PO</th>\
-            <th>Part Number</th>\
-            <th>Qty</th>\
-            <th>BIN number</th>\
-            <th>Receiver Name</th>\
-            <th>Receive Date</th>\
-          </tr>"
+                        <tr>\
+                          <th>PO</th>\
+                          <th>Part Number</th>\
+                          <th>Qty</th>\
+                          <th>BIN number</th>\
+                          <th>Receiver Name</th>\
+                          <th>Receive Date</th>\
+                        </tr>"
             for (var i in value) {
                 table_html += "<tr>";
                 for (var j in value[i]) {
@@ -134,7 +133,6 @@
             document.getElementById("confirm").innerHTML = table_html
             document.getElementById("prompt").style = "display:block";
         }
-
 
         function post_all_to_google() {
             var value = parseInput();
