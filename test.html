@@ -161,12 +161,14 @@
 
         $(document).ready(function() {
             $('#btnParse').click(function() {
+                document.getElementById("error").style = "display:none";
                 document.getElementById("error_output").innerHTML = "";
                 display_confirmation();
                 return false;
             });
             $("#btnSubmit").click(function() {
                 document.getElementById("error_output").innerHTML = "";
+                document.getElementById("error").style = "display:none";
                 post_all_to_google();
                 return false;
             });
