@@ -47,8 +47,8 @@
             <strong>Test Google Form</strong>
         </div>
         <div class="hidden-print" style="margin:20px auto;">
-          <textarea id="feed" name="feed" rows="10" cols="60"></textarea>
-          <button id="btnParse" >Parse</button>
+            <textarea id="feed" name="feed" rows="10" cols="60"></textarea>
+            <button id="btnParse">Parse</button>
         </div>
         <div class="hidden-print" id="confirm" style="display:block;"></div>
         <div class="hidden-print" id="prompt" style="display:none;">Please verify the result is correct. <br/>Only submit if everything is ok.
@@ -72,7 +72,7 @@
             var filter0 = field.split("-|").filter(function(el) {
                 return el.length != 0
             }); //Remove empty array
-            for (var i in filter0) {
+            for (i = 0; i < filter0.length; i++) {
                 write_row = filter0[i].split("|").filter(function(el) {
                     return el.length != 0
                 });
@@ -89,13 +89,13 @@
                     }
                 } else {
                     //clean up data:
-                    for (var i in write_row) {
+                    for (j = 0; j < write_row.length; j++) {
                         //Remove whitespaces
-                        write_row[i] = write_row[i].trim();
+                        write_row[j] = write_row[j].trim();
                         //If data has ":", only keep the second portion
                         // i.e. keep "1234" if "PO: 1234"
-                        if (write_row[i].indexOf(":") > 1) {
-                            write_row[i] = write_row[i].split(":")[1].trim();
+                        if (write_row[j].indexOf(":") > 1) {
+                            write_row[j] = write_row[j].split(":")[1].trim();
                         }
                     }
                     result.push(write_row);
@@ -115,9 +115,9 @@
                           <th>Receiver Name</th>\
                           <th>Receive Date</th>\
                         </tr>"
-            for (var i in value) {
+            for (i = 0; i < value.length; i++) {
                 table_html += "<tr>";
-                for (var j in value[i]) {
+                for (j = 0; j < value[i].length; j++) {
                     table_html += "<td>" + value[i][j] + "</td>";
                 }
                 table_html += "</tr>";
@@ -166,6 +166,7 @@
                 return false;
             });
             $("#btnSubmit").click(function() {
+                document.getElementById("error_output").innerHTML = "";
                 post_all_to_google();
                 return false;
             });
