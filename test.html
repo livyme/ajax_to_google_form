@@ -47,15 +47,15 @@
             <strong>Test Google Form</strong>
         </div>
         <div class="hidden-print" style="margin:20px auto;">
-            <form id="form" target="_self" onsubmit="" action="POST">
-                <fieldset>
+            <!-- <form id="form" target="_self" onsubmit="" action="POST">
+                <fieldset> -->
                     <!-- <label>Text</label> -->
-                    <textarea id="feed" name="feed" rows="10" cols="60"></textarea>
-                </fieldset>
-                <div style="width: 100%; display: block; float: right;">
-                    <button id="send" type="submit">Parse</button>
-                </div>
-            </form>
+        <textarea id="feed" name="feed" rows="10" cols="60"></textarea>
+              <!-- </fieldset> -->
+                <!-- <div style="width: 100%; display: block; float: right;"> -->
+        <button id="btnParse" >Parse</button>
+                <!-- </div> -->
+            <!-- </form> -->
         </div>
         <div class="hidden-print" id="confirm" style="display:block;"></div>
         <div class="hidden-print" id="prompt" style="display:none;">Please verify the result is correct. <br/>Only submit if everything is ok.
@@ -167,7 +167,7 @@
         }
 
         $(document).ready(function() {
-            $('#form').submit(function() {
+            $('#btnParse').click(function() {
                 display_confirmation();
                 return false;
             });
