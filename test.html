@@ -2,111 +2,118 @@
 <html>
 
 <head>
-    <title>Test Google Forms</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link href="https://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontawesome/4.1.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/css/bootstrapValidator.min.css" />
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
-    <style>
-        #confirm_table {
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
+  <title>Test Google Forms</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link href="https://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontawesome/4.1.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/css/bootstrapValidator.min.css" />
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
+  <style>
+    #confirm_table {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
 
-        #confirm_table td,
-        #confirm_table th {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
+    #confirm_table td,
+    #confirm_table th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
 
-        #confirm_table tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+    #confirm_table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
 
-        #confirm_table tr:hover {
-            background-color: #ddd;
-        }
+    #confirm_table tr:hover {
+      background-color: #ddd;
+    }
 
-        #confirm_table th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #4CAF50;
-            color: white;
-        }
-    </style>
+    #confirm_table th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: white;
+    }
+  </style>
 </head>
 
 <body>
-    <div style="width:600px;margin:0 auto;">
-        <div>
-            <strong>Test Google Form</strong>
-        </div>
-        <div class="hidden-print" style="margin:20px auto;">
-            <textarea id="feed" name="feed" rows="10" cols="60"></textarea>
-            <button id="btnParse">Parse</button>
-        </div>
-        <div class="hidden-print" id="confirm" style="display:block;"></div>
-        <div class="hidden-print" id="prompt" style="display:none;">Please verify the result is correct. <br/>Only submit if everything is ok.
-            <button id="btnSubmit">Submit</button>
-        </div>
-
-        <div id="result" style="display:none;">The following result has been uploaded to Google Sheet:
-            <hr/>
-            <div id='result_output'></div>
-        </div>
-        <div id="error" style="display:none;">
-            <hr/>The following error occurred:
-            <hr/>
-            <div id="error_output"></div>
-        </div>
+  <div style="width:600px;margin:0 auto;">
+    <div>
+      <strong>Test Google Form</strong>
     </div>
-    <script type="text/javascript">
-        function parseInput() {
-            var result = [];
-            var field = $('#feed').val().trim();
-            var filter0 = field.split("-|").filter(function(el) {
-                return el.length != 0
-            }); //Remove empty array
-            for (i = 0; i < filter0.length; i++) {
-                write_row = filter0[i].split("|").filter(function(el) {
-                    return el.length != 0
-                });
-                if (write_row.length != 6) {
-                    //check for input errors:
-                    if (write_row.length > 1) {
-                        document.getElementById("error").style = "display:block;color:red;";
-                        document.getElementById("error_output").innerHTML += "<p>" + write_row + "<br/>The above line has " + write_row.length + " elements instead of 6.</p>";
-                    } else {
-                        if (write_row[0].trim() != "") {
-                            document.getElementById("error").style = "display:block;color:red;";
-                            document.getElementById("error_output").innerHTML += "<p>" + write_row[0] + "<br/>The above line does not have '|' delimiter.</p>";
-                        }
-                    }
-                } else {
-                    //clean up data:
-                    for (j = 0; j < write_row.length; j++) {
-                        //Remove whitespaces
-                        write_row[j] = write_row[j].trim();
-                        //If data has ":", only keep the second portion
-                        // i.e. keep "1234" if "PO: 1234"
-                        if (write_row[j].indexOf(":") > 1) {
-                            write_row[j] = write_row[j].split(":")[1].trim();
-                        }
-                    }
-                    result.push(write_row);
-                }
-            }
-            return result;
-        }
+    <div class="hidden-print" style="margin:20px auto;">
+      <textarea id="feed" name="feed" rows="10" cols="60"></textarea>
+      <button id="btnParse">Parse</button>
+    </div>
+    <div class="hidden-print" id="confirm" style="display:block;"></div>
+    <div class="hidden-print" id="prompt" style="display:none;">Please verify the result is correct. <br/>Only submit if everything is ok.
+      <button id="btnSubmit">Submit</button>
+    </div>
 
-        function display_confirmation() {
-            var value = parseInput();
-            table_html = "<table id='confirm_table'>\
+    <div id="result" style="display:none;">The following result has been uploaded to Google Sheet:
+      <hr/>
+      <div id='result_output'></div>
+    </div>
+    <div id="error" style="display:none;">
+      <hr/>The following error occurred:
+      <hr/>
+      <div id="error_output"></div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    function parseInput() {
+      var result = [];
+      var field = $('#feed').val().trim();
+      var filter0 = field.split("-|").filter(function(el) {
+        return el.length != 0
+      }); //Remove empty array
+      for (i = 0; i < filter0.length; i++) {
+        write_row = filter0[i].split("|").filter(function(el) {
+          return el.length != 0
+        });
+        if (write_row.length != 6) {
+          //check for input errors:
+          if (write_row.length > 1) {
+            document.getElementById("error").style =
+              "display:block;color:red;";
+            document.getElementById("error_output").innerHTML +=
+              "<p>" + write_row + "<br/>The above line has " +
+              write_row.length + " elements instead of 6.</p>";
+          } else {
+            if (write_row[0].trim() != "") {
+              document.getElementById("error").style =
+                "display:block;color:red;";
+              document.getElementById("error_output").innerHTML +=
+                "<p>" + write_row[0] +
+                "<br/>The above line does not have '|' delimiter.</p>";
+            }
+          }
+        } else {
+          //clean up data:
+          for (j = 0; j < write_row.length; j++) {
+            //Remove whitespaces
+            write_row[j] = write_row[j].trim();
+            //If data has ":", only keep the second portion
+            // i.e. keep "1234" if "PO: 1234"
+            if (write_row[j].indexOf(":") > 1) {
+              write_row[j] = write_row[j].split(":")[1].trim();
+            }
+          }
+          result.push(write_row);
+        }
+      }
+      return result;
+    }
+
+    function display_confirmation() {
+      var value = parseInput();
+      table_html =
+        "<table id='confirm_table'>\
                         <tr>\
                           <th>PO</th>\
                           <th>Part Number</th>\
@@ -115,65 +122,72 @@
                           <th>Receiver Name</th>\
                           <th>Receive Date</th>\
                         </tr>"
-            for (i = 0; i < value.length; i++) {
-                table_html += "<tr>";
-                for (j = 0; j < value[i].length; j++) {
-                    table_html += "<td>" + value[i][j] + "</td>";
-                }
-                table_html += "</tr>";
-            }
-            table_html += "</table><hr/>";
-            document.getElementById("confirm").innerHTML = table_html
-            document.getElementById("prompt").style = "display:block";
+      for (i = 0; i < value.length; i++) {
+        table_html += "<tr>";
+        for (j = 0; j < value[i].length; j++) {
+          table_html += "<td>" + value[i][j] + "</td>";
         }
+        table_html += "</tr>";
+      }
+      table_html += "</table><hr/>";
+      document.getElementById("confirm").innerHTML = table_html
+      document.getElementById("prompt").style = "display:block";
+    }
 
-        function post_all_to_google() {
-            var value = parseInput();
-            for (var i in value) {
-                post_one_record_to_google(value[i]);
-            }
+    function post_all_to_google() {
+      var value = parseInput();
+      for (var i in value) {
+        post_one_record_to_google(value[i]);
+      }
+    }
+
+    function post_one_record_to_google(value) {
+      var google_url =
+        "https://docs.google.com/forms/d/e/1FAIpQLScfkaRigancL7oS3BlgxaA1Gl-G9JkTP1Ynv8RHrxzCDIQ51w/formResponse";
+
+      $.ajax({
+        url: google_url,
+        data: {
+          "entry.720312864": value[0],
+          "entry.1326218862": value[1],
+          "entry.536029499": value[2],
+          "entry.820736794": value[3],
+          "entry.100157182": value[4],
+          "entry.1170473252": value[5],
+        },
+        type: "POST",
+        dataType: "xml",
+        statusCode: {
+          0: function() {
+            document.getElementById("result").style =
+              "display:block;";
+            document.getElementById("result_output").innerHTML +=
+              "<p>" + value + "</p>";
+          },
+          200: function() {}
         }
+      });
+    }
 
-        function post_one_record_to_google(value) {
-            var google_url = "https://docs.google.com/forms/d/e/1FAIpQLScfkaRigancL7oS3BlgxaA1Gl-G9JkTP1Ynv8RHrxzCDIQ51w/formResponse";
-
-            $.ajax({
-                url: google_url,
-                data: {
-                    "entry.720312864": value[0],
-                    "entry.1326218862": value[1],
-                    "entry.536029499": value[2],
-                    "entry.820736794": value[3],
-                    "entry.100157182": value[4],
-                    "entry.1170473252": value[5],
-                },
-                type: "POST",
-                dataType: "xml",
-                statusCode: {
-                    0: function() {
-                        document.getElementById("result").style = "display:block;";
-                        document.getElementById("result_output").innerHTML += "<p>" + value + "</p>";
-                    },
-                    200: function() {}
-                }
-            });
-        }
-
-        $(document).ready(function() {
-            $('#btnParse').click(function() {
-                document.getElementById("error").style = "display:none";
-                document.getElementById("error_output").innerHTML = "";
-                display_confirmation();
-                return false;
-            });
-            $("#btnSubmit").click(function() {
-                document.getElementById("error_output").innerHTML = "";
-                document.getElementById("error").style = "display:none";
-                post_all_to_google();
-                return false;
-            });
-        });
-    </script>
+    $(document).ready(function() {
+      $('#btnParse').click(function() {
+        document.getElementById("error").style =
+          "display:none";
+        document.getElementById("error_output").innerHTML =
+          "";
+        display_confirmation();
+        return false;
+      });
+      $("#btnSubmit").click(function() {
+        document.getElementById("error_output").innerHTML =
+          "";
+        document.getElementById("error").style =
+          "display:none";
+        post_all_to_google();
+        return false;
+      });
+    });
+  </script>
 </body>
 
 </html>
