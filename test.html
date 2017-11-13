@@ -110,7 +110,7 @@
       return result;
     }
 
-    function display_confirmation() {
+    function displayConfirmation() {
       var value = parseInput();
       table_html =
         "<table id='confirm_table'>\
@@ -134,14 +134,14 @@
       document.getElementById("prompt").style = "display:block";
     }
 
-    function post_all_to_google() {
+    function postAllToGoogle() {
       var value = parseInput();
       for (var i in value) {
-        post_one_record_to_google(value[i]);
+        postOneRecordToGoogle(value[i]);
       }
     }
 
-    function post_one_record_to_google(value) {
+    function postOneRecordToGoogle(value) {
       var google_url =
         "https://docs.google.com/forms/d/e/1FAIpQLScfkaRigancL7oS3BlgxaA1Gl-G9JkTP1Ynv8RHrxzCDIQ51w/formResponse";
 
@@ -175,7 +175,7 @@
           "display:none";
         document.getElementById("error_output").innerHTML =
           "";
-        display_confirmation();
+        displayConfirmation();
         return false;
       });
       $("#btnSubmit").click(function() {
@@ -183,7 +183,7 @@
           "";
         document.getElementById("error").style =
           "display:none";
-        post_all_to_google();
+        postAllToGoogle();
         return false;
       });
     });
